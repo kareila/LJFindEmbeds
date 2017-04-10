@@ -24,9 +24,11 @@ This script identifies all the journal entries in the specified journal that hav
 
 3) In your directory for the archive, invoke the script: <code>./ljFindEmbeds.pl -u usernameonlj/usernameondw -s yyyy-mm -c path/to/authenticatedcookies.txt</code> where:
 
-• -u is a LJ username, or an LJ/DW username pair (if you have a different username on the two services),
-• -s is the starting month and year of your journal, expressed yyyy-mm, and
-• -c is your cookie file with your authenticated LJ and DW cookies.
+• -u is a LJ username, or an LJ/DW username pair (if you have a different username on the two services), 
+
+• -s is the starting month and year of your journal, expressed yyyy-mm, and 
+
+• -c is your cookie file with your authenticated LJ and DW cookies. 
 
 The arguments are all required.
 
