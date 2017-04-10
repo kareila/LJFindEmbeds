@@ -26,7 +26,7 @@ This script identifies all the journal entries in the specified journal that hav
 
    * -u is a LJ username, or an LJ/DW username pair (if you have a different username on the two services), 
    *  -s is the starting month and year of your journal, expressed yyyy-mm, and 
-   * -c is your cookie file with your authenticated LJ and DW cookies. 
+   * -c is your cookie file with your authenticated LJ cookies. 
 
 The arguments are all required.
 
