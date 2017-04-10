@@ -2,12 +2,12 @@
 A tool for finding all the LJ posts in a journal with media embeds in them.  Its only programmatic dependency is wget. It builds a navigable local cache on disk of all a LJ journal's posts that have media embeds in them, and writes an index file.
 
 ## What this is for
-The Dreamwidth Importer imports journals from Livejournal reasonably well.  But one glitch it has is when an entry (post) has a media embed in it, such as a YouTube video.  The way LJ handles that is apparently to store the embed HTML separately; while it necessarily serves up the raw HTML on the LJ website, the LJ Exporter only includes the pointers to these snippets of HTML.  Thus the Dreamwidth Importer has no access to whatever it was that was embedded, and neither does anything else that uses the LJ Exporter.
+The Dreamwidth Importer imports journals from Livejournal.  It does this reasonably well, but one thing it glitches on is importing a LJ entry (post) that has a media embed in it, such as a YouTube video.  The problem is with LJ.  The way LJ handles media embeds is apparently to store the embed HTML separately from the post.  While the Livejournal site necessarily serves up the raw HTML of the embed, er, embeded in the webpage on the LJ website when being served the ordinary way so it can render in the browser, the XML output of the LJ Exporter only includes the pointers to these snippets of HTML.  The LJ Exporter – the official programmatic interface to LJ – is what Dreamwidth interoperates with.  Thus the copy of the post available to the Dreamwidth Importer only has a cryptic pointer a la "lj-embed id=XYZ", and has no access to whatever it was that was originally embedded.  Neither does anything else that uses the LJ Exporter.
 
-This script is to assist in the <strong>manual updating of one's Dreamwidth journal, after importing a Livejournal journal.</strong>
+This script is to assist in the <strong>manual updating of one's Dreamwidth journal, after importing a Livejournal journal, to fix the media embeds.</strong>
 
 ## How this helps (What this does)
-This script downloads identifies all the journal entries in the specified journal that have media embeds in them, and downloads local copies of them into a directory called "username.livejournal.com". It then generates an index.html that presents you with conveniently paired links: the link to the cached LJ file (by post title) and the link to the corresponding day in your DW journal.
+This script identifies all the journal entries in the specified journal that have media embeds in them, and downloads local copies of all those posts into a directory called "<i>username</i>.livejournal.com". It then generates an index.html that presents conveniently paired links: the link to the cached LJ file (by post title) and the link to the corresponding day in your DW journal; it also lists the corresponding original URL to the post on Livejournal.
 
 ## Requirements
 • perl (tested against v5.10.1)<br />
