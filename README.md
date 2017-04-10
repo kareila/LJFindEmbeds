@@ -20,7 +20,7 @@ This script identifies all the journal entries in the specified journal that hav
 
 1) Download this script; put it someplace convenient, like into your results directory; and make it executable (<code>chmod u+x ljFindEmbeds.pl</code>).
 
-2) Come up with your cookie file (instructions below).  Put it somewhere you can find it, like in your archive directory.
+2) Come up with your cookie file (instructions below).  Put it somewhere you can find it, like in your results directory.
 
 3) In your directory for the archive, invoke the script: <code>./ljFindEmbeds.pl -u usernameonlj/usernameondw -s yyyy-mm -c path/to/authenticatedcookies.txt</code> where:
 
