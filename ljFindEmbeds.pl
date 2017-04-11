@@ -16,6 +16,17 @@ my $dwsubdomain = "";
 my $thisyear = "";
 my $thismonth = "";
 
+# this will allow us to use curl if our system doesn't have wget
+my $fetchcmd = '';
+$fetchcmd ||= 'wget' if `which wget`;
+$fetchcmd ||= 'curl' if `which curl`;
+die "You need to install either wget or curl on your system for this to work.\n"
+	unless $fetchcmd;
+
+my $fetch_do = { curl => qq(curl -s -L -c cookiejar.txt -b $authenticatedcookies --header "X-LJ-Auth: cookie"),
+                 wget => qq(wget -q --cookies=on --keep-session-cookies --save-cookies cookiejar.txt --load-cookies $authenticatedcookies --header "X-LJ-Auth: cookie"),
+               }->{$fetchcmd};
+
 sub arguer {
 	my $nextarg = "";
 	my $usernames = "";
@@ -98,10 +109,12 @@ sub wget_export_a_month {
 	#returns the webpage for that folder as a string
 	my $url  = "http://www.livejournal.com/export_do.bml?authas=$user" ;
 	my $postdata = 'what=journal&year='.$yyyy.'&month='.$mm.'&format=xml&header=checked&encid=2&field_itemid=checked&field_eventtime=checked&field_logtime=checked&field_subject=checked&field_event=checked&field_security=checked&field_allowmask=checked&field_currents&submit=Proceed';
-	
 
-	my $commandstring = "wget -q --cookies=on --keep-session-cookies --save-cookies cookiejar.txt --load-cookies $authenticatedcookies --header \"X-LJ-Auth: cookie\"  --post-data \'$postdata\' -O - \'$url\'"; #WORKS!
-	
+    my $fetch_opts = { curl => "--data '$postdata'",
+                       wget => "--post-data '$postdata' -O -",
+                     }->{$fetchcmd};
+	my $commandstring = "$fetch_do $fetch_opts '$url'";
+
 #	print $commandstring."\n";
 	return `$commandstring `;
 } #takes yyyy mm, returns the XML export for that year-month as a string
@@ -271,7 +284,8 @@ sub wget_LJ_one_month {
 	my $url  = "http://$user.livejournal.com/$yyyy/$mm" ;
 	print "Fetching page: $url\n";
 
-	my $commandstring = "wget -q --cookies=on --keep-session-cookies --save-cookies cookiejar.txt --load-cookies $authenticatedcookies --header \"X-LJ-Auth: cookie\"  -O - \'$url\'"; 
+    my $fetch_opts = { curl => "", wget => "-O -", }->{$fetchcmd};
+	my $commandstring = "$fetch_do $fetch_opts '$url'";
 	
 #	print $commandstring."\n";
 	return `$commandstring `; # works?
@@ -343,12 +357,31 @@ sub wget_all_posts_with_embeds{
 # runs the wget, writing the files to disk
 	my $urlfile = $_[0];
 
-	my $commandstring = "wget -q --cookies=on --keep-session-cookies --save-cookies cookiejar.txt --load-cookies $authenticatedcookies --header \"X-LJ-Auth: cookie\"  -x -i $urlfile"; 
-	
-#	print $commandstring."\n";
-	return `$commandstring `; # works?
+    my $fetch_opts = { curl => "--create-dirs",
+                       wget => "-x -i $urlfile",
+                     }->{$fetchcmd};
 
-	
+    if ($fetchcmd eq 'curl') {
+        # unfortunately curl doesn't have the nice link list download option
+        open my $fh, $urlfile;
+        my %seen;
+
+        while (<$fh>) {
+            chomp;
+            my $url = $_;
+            next unless $url;
+            my ($fn) = ( $url =~ m'^https?://(.*)' );
+            next if $seen{$fn}++;  # don't download duplicates
+            $fetch_opts .= " --url '$url' -o '$fn'";
+        }
+
+        close $fh;
+    }
+
+	my $commandstring = "$fetch_do $fetch_opts";
+
+#	print $commandstring."\n";
+	return `$commandstring `;
 }
 
 sub pruneOutToS{
