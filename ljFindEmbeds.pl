@@ -34,17 +34,18 @@ sub arguer {
 			$nextarg = "authenticatedcookies";		
 		}
 	}
-	($user, $dwsubdomain) = split /\//, $usernames;
+	($user, $dwsubdomain) = split /\//, $usernames if $usernames;
 	($user) or die "No LJ user specified. \n";
 	if (! ($dwsubdomain) ) { $dwsubdomain = $user; }
 	$dwsubdomain =~ s/\_/\-/g;
 	if ($startdate =~ /(\d{4})(\_|\-|\/)(\d{2})/) {
 		$startyear = $1;
 		$startmonth = $3;
-	} else {
+	} elsif ($startdate) {
 		die "Couldn't parse the startdate argument, $startdate.\n";
 	}
-	($startyear, $startmonth) = split /\_|\-|\//, $startdate;
+	($startyear, $startmonth) = split /\_|\-|\//, $startdate if $startdate;
+	die "No start date given!\n" unless $startyear && $startmonth;
 	($authenticatedcookies) or die "No authenticated cookie file specifed.  Can\'t access the LJ exporter without logging in, sorry.\n";
 	(-f $authenticatedcookies) or die "Can\'t find authenticated cookie file \"$authenticatedcookies\".\n";
 
